@@ -13,13 +13,29 @@ class _HomePageState extends State<HomePage> {
   //default todo tasks
 
   List todoList = [
-    ["LearnReact", false],
-    ["LearnReact2", false],
+    [
+      "Holovachko",
+      "Vasyl",
+      false,
+      "https://cdn.v-a-c.ru/v-a-c-static/store/setkaimage/4c7fdd79-f812-443b-94ca-5a99dd2441c2/image/769c0f9e172c06259b00845a023b7bc6.jpg",
+      "Toyota",
+      "Supra",
+      ['18:30-22:00'],
+    ],
+    [
+      "Andrii",
+      "Miluchenko",
+      false,
+      "https://s2.stc.all.kpcdn.net/family/wp-content/uploads/2022/02/den-taksista-2022-istoriya-i-tradiczii-mezhdunarodnogo-prazdnika-960-960x540.jpg",
+      "Volkswagen",
+      "Golf",
+      ["8:00-14:00"],
+    ],
   ];
 
-  void checkBoxChange(int index) {
+  void statusChange(int index) {
     setState(() {
-      todoList[index][1] = !todoList[index][1];
+      todoList[index][2] = !todoList[index][2];
     });
   }
 
@@ -29,27 +45,26 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // text controller
-
-  final _controller = TextEditingController();
-
-  void saveNewTask() {
+  void saveNewTask(int index) {
     setState(() {
-      todoList.add([_controller.text, false]);
+      todoList[index][2] = !todoList[index][2];
     });
-    _controller.clear();
     Navigator.of(context).pop();
   }
 
-  void createNewTask() {
+  void createNewTask(int index) {
     showDialog(
       context: context,
       builder: (constext) {
         return DialogBox(
-          controller: _controller,
-          onCancel: () => Navigator.of(context).pop(),
-          onSave: saveNewTask,
-        );
+            onCancel: () => Navigator.of(context).pop(),
+            image: todoList[index][3],
+            index: index,
+            onSave: (index) => saveNewTask(index),
+            hours: todoList[index][6],
+            carManufacture: todoList[index][4],
+            carModel: todoList[index][5],
+            isBooked: todoList[index][2]);
       },
     );
   }
@@ -57,25 +72,22 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.yellow[200],
-        appBar: AppBar(
-          title: Text('Myroslav to do'),
-          elevation: 0,
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: createNewTask,
-          child: Icon(Icons.add),
-        ),
-        body: ListView.builder(
-          itemCount: todoList.length,
-          itemBuilder: (context, index) {
-            return ToDoTile(
-              taskName: todoList[index][0],
-              taskComplete: todoList[index][1],
-              onChanged: (val) => checkBoxChange(index),
-              onClose: () => close(index),
-            );
-          },
-        ));
+      backgroundColor: Colors.yellow[200],
+      appBar: AppBar(
+        title: const Text('Your driver'),
+        elevation: 0,
+      ),
+      body: ListView.builder(
+        itemCount: todoList.length,
+        itemBuilder: (context, index) {
+          return ToDoTile(
+            image: todoList[index][3],
+            taskName: todoList[index][0],
+            taskComplete: todoList[index][2],
+            onClose: () => createNewTask(index),
+          );
+        },
+      ),
+    );
   }
 }
